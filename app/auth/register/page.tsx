@@ -1,4 +1,4 @@
-// app/register/page.tsx
+// app/register
 import RegisterForm from "../components/RegisterForm";
 
 export default function RegisterPage() {
