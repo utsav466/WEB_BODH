@@ -4,7 +4,7 @@ import RegisterForm from "../components/RegisterForm";
 export default function RegisterPage() {
   return (
     <div className="min-h-screen flex">
-      {/* Left branding  */}
+      {/* Left  */}
       <div className="hidden md:flex flex-col justify-center items-center w-1/2 bg-blue-600 p-8">
         <img
           src="/logo_varient_2.png"
