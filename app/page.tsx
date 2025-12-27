@@ -30,8 +30,7 @@ export default function HomePage() {
         {/* <Link
          
           className="rounded-lg border border-green-600 px-4 py-2 text-green-600 font-medium hover:bg-green-50"
-        >
-          Dashboard
+        
         </Link> */}
       </div>
     </main>
