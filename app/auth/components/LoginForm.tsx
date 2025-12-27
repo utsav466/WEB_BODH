@@ -18,11 +18,7 @@ export default function LoginForm() {
 
     try {
       await new Promise((r) => setTimeout(r, 1000));
-
-      if (!email || !password) {
-        throw new Error("Email and password are required");
-      }
-
+      if (!email || !password) throw new Error("Email and password are required");
       router.push("/auth/dashboard");
     } catch (err: any) {
       setError(err.message || "Login failed");
@@ -33,57 +29,72 @@ export default function LoginForm() {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">
+      <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-md">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
           Login to your account
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Email */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Email
-            </label>
             <input
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
-              placeholder="you@example.com"
+              className="w-full rounded-full border border-sky-400 px-4 py-3 text-gray-900 shadow-sm 
+                         focus:outline-none focus:ring-2 focus:ring-sky-500"
+              placeholder="name@mail.com"
               required
             />
           </div>
 
+          {/* Password */}
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-              Password
-            </label>
             <input
               id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+              className="w-full rounded-full border border-sky-400 px-4 py-3 text-gray-900 shadow-sm 
+                         focus:outline-none focus:ring-2 focus:ring-sky-500"
               placeholder="••••••••"
               required
             />
           </div>
 
+          {/* Remember me + Forgot password */}
+          <div className="flex items-center justify-between text-sm">
+            <label className="flex items-center gap-2">
+              <input type="checkbox" className="rounded text-sky-600 focus:ring-sky-500" />
+              Remember me
+            </label>
+            <Link href="/auth/forgot" className="text-sky-600 hover:underline">
+              Forgot password?
+            </Link>
+          </div>
+
           {error && <p className="text-red-600 text-sm font-medium">{error}</p>}
 
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-white font-medium shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 disabled:opacity-60"
+            className="w-full rounded-full bg-blue-600 px-4 py-3 text-white font-semibold shadow 
+                       hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500 disabled:opacity-60"
           >
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
-        <p className="mt-4 text-sm text-gray-600 text-center">
-          Don’t have an account?{" "}
-          <Link href="/auth/register" className="font-medium text-blue-600 hover:text-blue-700">
-            SignUp
+        {/* Sign up prompt */}
+        <p className="mt-6 text-sm text-gray-600 text-center">
+          Not a member yet?{" "}
+          <Link
+            href="/auth/register"
+            className="font-medium text-sky-600 hover:text-sky-700"
+          >
+            Sign Up
           </Link>
         </p>
       </div>

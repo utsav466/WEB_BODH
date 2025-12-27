@@ -1,38 +1,38 @@
+// import Header from "./public/components/Header";
+import Header from "./public/components/Header";
 import Link from "next/link";
-import Image from "next/image";
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center ">
-      <Image
-        src="/bodhBlue.svg"
-        alt="BODH Logo"
-        width={200}
-        height={200}
-        className="mb-6"
-        priority
-      />
-      <h1 className="text-4xl font-bold text-blue-600">Welcome to BODH</h1>
-      <p className="text-gray-700 mt-2">Your digital bookshelf, just a login away.</p>
-      <div className="flex gap-4 mt-6">
-        <Link
-          href="/auth/login"
-          className="rounded-lg bg-blue-600 px-4 py-2 text-white font-medium shadow hover:bg-blue-700"
-        >
-          Login
+    <main
+      className="min-h-screen flex flex-col bg-cover bg-center"
+      style={{
+        backgroundImage: "url('/BG.png')", // background image covers entire page
+      }}
+    >
+      {/* Top Navigation */}
+      <Header />
+
+      {/* Hero Section */}
+      <section
+        className="flex flex-col items-center justify-center flex-1 text-center px-6 
+                   mx-4 md:mx-20 p-8"
+      >
+        <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 drop-shadow-lg">
+          Your Online Book Haven
+        </h1>
+        <p className="text-lg md:text-xl text-white max-w-2xl mb-8 drop-shadow-md">
+          Discover, explore, and buy books effortlessly from a curated digital
+          library built for readers of every kind.
+        </p>
+
+        {/* Button navigates to /auth/login */}
+        <Link href="/auth/login">
+          <button className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-6 py-3 rounded-lg shadow-md transition">
+            Get Started
+          </button>
         </Link>
-        <Link
-          href="/auth/register"
-          className="rounded-lg border border-blue-600 px-4 py-2 text-blue-600 font-medium hover:bg-blue-50"
-        >
-          Sign Up
-        </Link>
-        {/* <Link
-         
-          className="rounded-lg border border-green-600 px-4 py-2 text-green-600 font-medium hover:bg-green-50"
-        
-        </Link> */}
-      </div>
+      </section>
     </main>
   );
 }
