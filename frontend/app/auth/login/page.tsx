@@ -63,16 +63,4 @@ export default function LoginPage() {
         
 //     }
     
-//     return (
-//         <div>
-//             { error && <div className="text-red-500">{error}</div> }
-//             <form onSubmit={handleSubmit(onSubmit)}
-//                 className="mx-auto p-2 max-w-xl border">
-//                 <div className="mt-2">
-//                     <label>Email</label>
-//                     <input {...register("email")}  className="border"/>
-//                     {errors.email && <span className="text-red-500">{errors.email.message}</span>}
-//                 </div>
-        
-                
 
