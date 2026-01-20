@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 18, "column": 0}, "map": {"version":3,"sources":["file:///Users/utsavthapa/Desktop/FINAL/Bodh-Web-Project/frontend/app/auth/dashboard/page.tsx"],"sourcesContent":["export default function DashboardPage() {\n  return (\n    <main className=\"min-h-screen flex flex-col items-center justify-center bg-blue-50 p-8\">\n      <h1 className=\"text-4xl font-bold text-blue-700\">Welcome to Dashboard</h1>\n      <p className=\"mt-2 text-blue-600\">You are now logged in.</p>\n    </main>\n  );\n}\n"],"names":[],"mappings":";;;;;;AAAe,SAAS;IACtB,qBACE,wSAAC;QAAK,WAAU;;0BACd,wSAAC;gBAAG,WAAU;0BAAmC;;;;;;0BACjD,wSAAC;gBAAE,WAAU;0BAAqB;;;;;;;;;;;;AAGxC"}}]
-}
