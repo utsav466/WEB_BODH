@@ -3,11 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { handleRegister } from "../../../lib/actions/auth-action";
 
 export default function RegisterForm() {
   const [formData, setFormData] = useState({
     fullName: "",
-    phone: "",
+    username: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -15,6 +16,7 @@ export default function RegisterForm() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [success, setSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,9 +26,7 @@ export default function RegisterForm() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     if (!formData.fullName.trim()) newErrors.fullName = "Full name is required";
-    if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
-    else if (!/^\d{10}$/.test(formData.phone))
-      newErrors.phone = "Phone must be 10 digits";
+    if (!formData.username.trim()) newErrors.username = "Username is required";
     if (!formData.email.trim()) newErrors.email = "Email is required";
     else if (!/\S+@\S+\.\S+/.test(formData.email))
       newErrors.email = "Invalid email format";
@@ -44,12 +44,24 @@ export default function RegisterForm() {
     e.preventDefault();
     if (!validateForm()) return;
 
-    console.log("Register form submitted:", formData);
-    setSuccess(true);
+    setErrorMessage("");
+    try {
+      const res = await handleRegister(formData); // ✅ matches CreateUserDTO
 
-    setTimeout(() => {
-      router.push("/auth/login");
-    }, 1500);
+      if (res.success && res.token) {
+        localStorage.setItem("token", res.token);
+        setSuccess(true);
+        router.push("/auth/user/dashboard");
+
+      } else {
+        setErrorMessage(res.message || "Registration failed");
+      }
+    } catch (err: any) {
+      setErrorMessage(
+        err.response?.data?.message || err.message || "Registration failed"
+      );
+      console.error("Register error:", err.response?.data);
+    }
   };
 
   return (
@@ -67,28 +79,22 @@ export default function RegisterForm() {
             placeholder="Full Name"
             value={formData.fullName}
             onChange={handleChange}
-            className="w-full border border-sky-400 rounded-full px-4 py-3 
-                       focus:outline-none focus:ring-2 focus:ring-sky-500"
+            className="w-full border border-sky-400 rounded-full px-4 py-3 focus:outline-none focus:ring-2 focus:ring-sky-500"
           />
-          {errors.fullName && (
-            <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>
-          )}
+          {errors.fullName && <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>}
         </div>
 
-        {/* Phone */}
+        {/* Username */}
         <div>
           <input
-            type="tel"
-            name="phone"
-            placeholder="Phone"
-            value={formData.phone}
+            type="text"
+            name="username"
+            placeholder="Username"
+            value={formData.username}
             onChange={handleChange}
-            className="w-full border border-sky-400 rounded-full px-4 py-3 
-                       focus:outline-none focus:ring-2 focus:ring-sky-500"
+            className="w-full border border-sky-400 rounded-full px-4 py-3 focus:outline-none focus:ring-2 focus:ring-sky-500"
           />
-          {errors.phone && (
-            <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
-          )}
+          {errors.username && <p className="text-red-500 text-sm mt-1">{errors.username}</p>}
         </div>
 
         {/* Email */}
@@ -99,12 +105,9 @@ export default function RegisterForm() {
             placeholder="Email"
             value={formData.email}
             onChange={handleChange}
-            className="w-full border border-sky-400 rounded-full px-4 py-3 
-                       focus:outline-none focus:ring-2 focus:ring-sky-500"
+            className="w-full border border-sky-400 rounded-full px-4 py-3 focus:outline-none focus:ring-2 focus:ring-sky-500"
           />
-          {errors.email && (
-            <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-          )}
+          {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
         </div>
 
         {/* Password */}
@@ -115,12 +118,9 @@ export default function RegisterForm() {
             placeholder="Password"
             value={formData.password}
             onChange={handleChange}
-            className="w-full border border-sky-400 rounded-full px-4 py-3 
-                       focus:outline-none focus:ring-2 focus:ring-sky-500"
+            className="w-full border border-sky-400 rounded-full px-4 py-3 focus:outline-none focus:ring-2 focus:ring-sky-500"
           />
-          {errors.password && (
-            <p className="text-red-500 text-sm mt-1">{errors.password}</p>
-          )}
+          {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
         </div>
 
         {/* Confirm Password */}
@@ -131,8 +131,7 @@ export default function RegisterForm() {
             placeholder="Confirm Password"
             value={formData.confirmPassword}
             onChange={handleChange}
-            className="w-full border border-sky-400 rounded-full px-4 py-3 
-                       focus:outline-none focus:ring-2 focus:ring-sky-500"
+            className="w-full border border-sky-400 rounded-full px-4 py-3 focus:outline-none focus:ring-2 focus:ring-sky-500"
           />
           {errors.confirmPassword && (
             <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
@@ -142,18 +141,14 @@ export default function RegisterForm() {
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white rounded-full px-4 py-3 
-                     hover:bg-sky-600 transition font-semibold"
+          className="w-full bg-blue-500 text-white rounded-full px-4 py-3 hover:bg-sky-600 transition font-semibold"
         >
           Sign Up
         </button>
       </form>
 
-      {success && (
-        <p className="mt-4 text-green-600 text-center font-medium">
-          Signup successfully
-        </p>
-      )}
+      {errorMessage && <p className="mt-4 text-red-600 text-center font-medium">{errorMessage}</p>}
+      {success && <p className="mt-4 text-green-600 text-center font-medium">Signup successful</p>}
 
       <p className="mt-4 text-center text-sm">
         Already have an account?{" "}
