@@ -76,14 +76,3 @@ export default function LoginPage() {
         
                 
 
-//                 <div className="mt-2">
-//                     <label>Password</label>
-//                     <input type="password" {...register("password")} className="border" />
-//                     {errors.password && <span className="text-red-500">{errors.password.message}</span>}
-//                 </div>
-
-//                 <button type="submit" className="p-2 bg-green-500 mt-4">Submit</button>
-//             </form>
-//         </div>
-//     );
-// }
