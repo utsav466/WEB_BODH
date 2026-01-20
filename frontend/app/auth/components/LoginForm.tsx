@@ -38,7 +38,7 @@ export default function LoginForm() {
       const res = await handleLogin(formData);
 
       if (res.success) {
-        // ✅ Cookies are set on the server action now
+     
         router.push("/auth/user/dashboard");
         return;
       }

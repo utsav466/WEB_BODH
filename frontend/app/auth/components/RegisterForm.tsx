@@ -46,7 +46,7 @@ export default function RegisterForm() {
 
     setErrorMessage("");
     try {
-      const res = await handleRegister(formData); // ✅ matches CreateUserDTO
+      const res = await handleRegister(formData); 
 
       if (res.success && res.token) {
         localStorage.setItem("token", res.token);
