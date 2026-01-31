@@ -5,8 +5,22 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { handleRegister } from "../../../lib/actions/auth-action";
 
+type RegisterFormData = {
+  fullName: string;
+  username: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+};
+
+type RegisterResponse = {
+  success?: boolean;
+  token?: string;
+  message?: string;
+};
+
 export default function RegisterForm() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<RegisterFormData>({
     fullName: "",
     username: "",
     email: "",
@@ -15,25 +29,39 @@ export default function RegisterForm() {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [success, setSuccess] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    // Clear messages as user edits
+    setErrorMessage("");
+    setSuccessMessage("");
+
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
+
     if (!formData.fullName.trim()) newErrors.fullName = "Full name is required";
     if (!formData.username.trim()) newErrors.username = "Username is required";
+
     if (!formData.email.trim()) newErrors.email = "Email is required";
     else if (!/\S+@\S+\.\S+/.test(formData.email))
       newErrors.email = "Invalid email format";
+
     if (!formData.password) newErrors.password = "Password is required";
     else if (formData.password.length < 6)
       newErrors.password = "Password must be at least 6 characters";
-    if (formData.confirmPassword !== formData.password)
+
+    if (!formData.confirmPassword)
+      newErrors.confirmPassword = "Confirm password is required";
+    else if (formData.confirmPassword !== formData.password)
       newErrors.confirmPassword = "Passwords do not match";
 
     setErrors(newErrors);
@@ -42,25 +70,44 @@ export default function RegisterForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Reset messages before validating/submitting
+    setErrorMessage("");
+    setSuccessMessage("");
+
     if (!validateForm()) return;
 
-    setErrorMessage("");
+    setIsSubmitting(true);
+
     try {
-      const res = await handleRegister(formData); 
+      const res = (await handleRegister(formData)) as RegisterResponse;
 
-      if (res.success && res.token) {
-        localStorage.setItem("token", res.token);
-        setSuccess(true);
-        router.push("/auth/user/dashboard");
+      // Treat success as true ONLY if explicitly true OR token exists
+      const isSuccess = res?.success === true || Boolean(res?.token);
 
+      if (isSuccess) {
+        if (res?.token) localStorage.setItem("token", res.token);
+
+        setErrors({});
+        setErrorMessage("");
+        setSuccessMessage(res?.message || "Registration successful");
+
+        // Let the user see the green message, then navigate
+        setTimeout(() => {
+          router.push("/auth/login");
+        }, 1200);
       } else {
-        setErrorMessage(res.message || "Registration failed");
+        setSuccessMessage("");
+        setErrorMessage(res?.message || "Registration failed");
       }
     } catch (err: any) {
+      setSuccessMessage("");
       setErrorMessage(
-        err.response?.data?.message || err.message || "Registration failed"
+        err?.response?.data?.message || err?.message || "Registration failed"
       );
-      console.error("Register error:", err.response?.data);
+      console.error("Register error:", err?.response?.data || err);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -81,7 +128,9 @@ export default function RegisterForm() {
             onChange={handleChange}
             className="w-full border border-sky-400 rounded-full px-4 py-3 focus:outline-none focus:ring-2 focus:ring-sky-500"
           />
-          {errors.fullName && <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>}
+          {errors.fullName && (
+            <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>
+          )}
         </div>
 
         {/* Username */}
@@ -94,7 +143,9 @@ export default function RegisterForm() {
             onChange={handleChange}
             className="w-full border border-sky-400 rounded-full px-4 py-3 focus:outline-none focus:ring-2 focus:ring-sky-500"
           />
-          {errors.username && <p className="text-red-500 text-sm mt-1">{errors.username}</p>}
+          {errors.username && (
+            <p className="text-red-500 text-sm mt-1">{errors.username}</p>
+          )}
         </div>
 
         {/* Email */}
@@ -107,7 +158,9 @@ export default function RegisterForm() {
             onChange={handleChange}
             className="w-full border border-sky-400 rounded-full px-4 py-3 focus:outline-none focus:ring-2 focus:ring-sky-500"
           />
-          {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+          {errors.email && (
+            <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+          )}
         </div>
 
         {/* Password */}
@@ -120,7 +173,9 @@ export default function RegisterForm() {
             onChange={handleChange}
             className="w-full border border-sky-400 rounded-full px-4 py-3 focus:outline-none focus:ring-2 focus:ring-sky-500"
           />
-          {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+          {errors.password && (
+            <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+          )}
         </div>
 
         {/* Confirm Password */}
@@ -134,21 +189,34 @@ export default function RegisterForm() {
             className="w-full border border-sky-400 rounded-full px-4 py-3 focus:outline-none focus:ring-2 focus:ring-sky-500"
           />
           {errors.confirmPassword && (
-            <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
+            <p className="text-red-500 text-sm mt-1">
+              {errors.confirmPassword}
+            </p>
           )}
         </div>
 
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white rounded-full px-4 py-3 hover:bg-sky-600 transition font-semibold"
+          disabled={isSubmitting}
+          className="w-full bg-blue-500 text-white rounded-full px-4 py-3 hover:bg-sky-600 transition font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
         >
-          Sign Up
+          {isSubmitting ? "Signing Up..." : "Sign Up"}
         </button>
       </form>
 
-      {errorMessage && <p className="mt-4 text-red-600 text-center font-medium">{errorMessage}</p>}
-      {success && <p className="mt-4 text-green-600 text-center font-medium">Signup successful</p>}
+      {/* Messages */}
+      {errorMessage && (
+        <p className="mt-4 text-red-600 text-center font-medium">
+          {errorMessage}
+        </p>
+      )}
+
+      {successMessage && (
+        <p className="mt-4 text-green-600 text-center font-medium">
+          {successMessage}
+        </p>
+      )}
 
       <p className="mt-4 text-center text-sm">
         Already have an account?{" "}
