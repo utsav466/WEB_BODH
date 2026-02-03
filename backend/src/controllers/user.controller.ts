@@ -1,9 +1,48 @@
 import { Response } from "express";
 import { UserModel } from "../models/user.model";
 import { AuthRequest } from "../middlewares/auth.middlewares";
-// import { AuthRequest } from "../middlewares/auth.middleware";
 
 export class UserController {
+
+  // ✅ UPDATE profile (fullName + optional avatar)
+  async updateMe(req: AuthRequest, res: Response) {
+    try {
+      if (!req.userId) {
+        return res.status(401).json({ success: false, message: "Unauthorized" });
+      }
+
+      const updateData: any = {
+        fullName: req.body.fullName,
+      };
+
+      if (req.file) {
+        updateData.avatarUrl = `/uploads/avatars/${req.file.filename}`;
+      }
+
+      const user = await UserModel.findByIdAndUpdate(
+        req.userId,
+        updateData,
+        { new: true }
+      ).select("-password");
+
+      if (!user) {
+        return res.status(404).json({ success: false, message: "User not found" });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: "Profile updated",
+        data: user,
+      });
+    } catch (error: any) {
+      return res.status(500).json({
+        success: false,
+        message: error?.message || "Internal Server Error",
+      });
+    }
+  }
+
+  // ✅ avatar-only (unchanged)
   async updateMyAvatar(req: AuthRequest, res: Response) {
     try {
       if (!req.userId) {
@@ -11,10 +50,12 @@ export class UserController {
       }
 
       if (!req.file) {
-        return res.status(400).json({ success: false, message: "avatar file is required" });
+        return res.status(400).json({
+          success: false,
+          message: "avatar file is required",
+        });
       }
 
-      // This will be served as: /uploads/avatars/<filename>
       const avatarUrl = `/uploads/avatars/${req.file.filename}`;
 
       const user = await UserModel.findByIdAndUpdate(
@@ -40,6 +81,7 @@ export class UserController {
     }
   }
 
+  // ✅ current user
   async me(req: AuthRequest, res: Response) {
     try {
       if (!req.userId) {
@@ -47,11 +89,16 @@ export class UserController {
       }
 
       const user = await UserModel.findById(req.userId).select("-password");
-      if (!user) return res.status(404).json({ success: false, message: "User not found" });
+      if (!user) {
+        return res.status(404).json({ success: false, message: "User not found" });
+      }
 
       return res.status(200).json({ success: true, data: user });
     } catch (error: any) {
-      return res.status(500).json({ success: false, message: error?.message || "Internal Server Error" });
+      return res.status(500).json({
+        success: false,
+        message: error?.message || "Internal Server Error",
+      });
     }
   }
 }

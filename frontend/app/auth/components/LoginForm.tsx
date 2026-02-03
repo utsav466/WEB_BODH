@@ -20,6 +20,7 @@ export default function LoginForm() {
     if (!formData.email.trim()) newErrors.email = "Email is required";
     else if (!/\S+@\S+\.\S+/.test(formData.email))
       newErrors.email = "Invalid email format";
+
     if (!formData.password) newErrors.password = "Password is required";
     else if (formData.password.length < 6)
       newErrors.password = "Password must be at least 6 characters";
@@ -37,9 +38,13 @@ export default function LoginForm() {
     try {
       const res = await handleLogin(formData);
 
-      if (res.success) {
-     
-        router.push("/auth/user/dashboard");
+      if (res.success && res.data) {
+        // ✅ ROLE-BASED REDIRECT (FIX)
+        if (res.data.role === "admin") {
+          router.push("/admin/dashboard");
+        } else {
+          router.push("/user/dashboard");
+        }
         return;
       }
 
@@ -64,7 +69,8 @@ export default function LoginForm() {
             placeholder="Email"
             value={formData.email}
             onChange={handleChange}
-            className="w-full border border-sky-400 rounded-full px-4 py-3 focus:outline-none focus:ring-2 focus:ring-sky-500"
+            className="w-full border border-sky-400 rounded-full px-4 py-3
+                       focus:outline-none focus:ring-2 focus:ring-sky-500"
           />
           {errors.email && (
             <p className="text-red-500 text-sm mt-1">{errors.email}</p>
@@ -78,7 +84,8 @@ export default function LoginForm() {
             placeholder="Password"
             value={formData.password}
             onChange={handleChange}
-            className="w-full border border-sky-400 rounded-full px-4 py-3 focus:outline-none focus:ring-2 focus:ring-sky-500"
+            className="w-full border border-sky-400 rounded-full px-4 py-3
+                       focus:outline-none focus:ring-2 focus:ring-sky-500"
           />
           {errors.password && (
             <p className="text-red-500 text-sm mt-1">{errors.password}</p>
@@ -87,7 +94,8 @@ export default function LoginForm() {
 
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white rounded-full px-4 py-3 hover:bg-sky-600 transition font-semibold"
+          className="w-full bg-blue-500 text-white rounded-full px-4 py-3
+                     hover:bg-sky-600 transition font-semibold"
         >
           Login
         </button>
