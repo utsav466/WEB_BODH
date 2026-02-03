@@ -69,7 +69,7 @@ export default function AdminUserDetailPage() {
             " />
           </div>
 
-          {/* =============================
+          {/* ==========================
               User Info
           ================================ */}
           <div className="space-y-4 text-gray-700">
