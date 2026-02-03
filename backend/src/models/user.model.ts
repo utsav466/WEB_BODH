@@ -12,6 +12,7 @@ const UserSchema = new Schema(
       enum: ["user", "admin"],
       default: "user",
     },
+     avatarUrl: { type: String, default: "" },
   },
   {
     timestamps: true,
@@ -22,6 +23,7 @@ export interface IUser extends UserType, Document {
   _id: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
+  avatarUrl?: string;
 }
 
 export const UserModel = mongoose.model<IUser>("User", UserSchema);
