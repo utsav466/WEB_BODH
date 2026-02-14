@@ -8,7 +8,7 @@ import { UserModel } from "../models/user.model";
 const userService = new UserService();
 
 export class AuthController {
-  // =============================
+  // ===========================
   // REGISTER
   // =============================
   async register(req: Request, res: Response) {
