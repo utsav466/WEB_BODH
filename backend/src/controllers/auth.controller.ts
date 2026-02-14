@@ -10,7 +10,7 @@ const userService = new UserService();
 export class AuthController {
   // ========================
   // REGISTER
-  // =============================
+  // ==========================
   async register(req: Request, res: Response) {
     try {
       const parsedData = CreateUserDTO.safeParse(req.body);
