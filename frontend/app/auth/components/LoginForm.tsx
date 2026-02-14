@@ -39,7 +39,6 @@ export default function LoginForm() {
       const res = await handleLogin(formData);
 
       if (res.success && res.data) {
-        // ✅ ROLE-BASED REDIRECT (FIX)
         if (res.data.role === "admin") {
           router.push("/admin/dashboard");
         } else {
@@ -90,6 +89,16 @@ export default function LoginForm() {
           {errors.password && (
             <p className="text-red-500 text-sm mt-1">{errors.password}</p>
           )}
+        </div>
+
+        {/* ✅ Forgot Password Link */}
+        <div className="text-right text-sm">
+          <Link
+            href="/auth/forgot-password"
+            className="text-sky-600 hover:underline"
+          >
+            Forgot Password?
+          </Link>
         </div>
 
         <button

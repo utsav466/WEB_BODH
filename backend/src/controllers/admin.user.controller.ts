@@ -1,9 +1,7 @@
-// src/controllers/admin.user.controller.ts
-
 import { Request, Response } from "express";
 import { UserRepository } from "../repositories/user.repository";
 import bcryptjs from "bcryptjs";
-import mongoose from "mongoose"; // ✅ ADD THIS
+import mongoose from "mongoose";
 
 const repo = new UserRepository();
 
@@ -34,15 +32,31 @@ export class AdminUserController {
     }
   }
 
-  async getAllUsers(_: Request, res: Response) {
-    const users = await repo.getAllUsers();
-    return res.json({ success: true, data: users });
+  async getAllUsers(req: Request, res: Response) {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const search = (req.query.search as string) || "";
+
+    const { users, total } = await repo.getAllUsers(
+      page,
+      limit,
+      search
+    );
+
+    return res.json({
+      success: true,
+      data: users,
+      pagination: {
+        total,
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
   }
 
   async getUserById(req: Request, res: Response) {
     const { id } = req.params;
 
-    // ✅ ADD THIS BLOCK
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
@@ -66,7 +80,6 @@ export class AdminUserController {
     const { id } = req.params;
     const data = req.body;
 
-    // ✅ ADD THIS BLOCK
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
@@ -93,7 +106,6 @@ export class AdminUserController {
   async deleteUser(req: Request, res: Response) {
     const { id } = req.params;
 
-    // ✅ ADD THIS BLOCK
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
