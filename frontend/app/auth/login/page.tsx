@@ -31,36 +31,3 @@ export default function LoginPage() {
 
 
 
-// "use client";
-// import { useForm } from "react-hook-form";
-// import z from "zod";
-// import { zodResolver } from "@hookform/resolvers/zod";
-
-// import { useState, useTransition } from "react";
-// import { useRouter } from "next/navigation";
-
-// export const loginSchema = z.object(
-//     {
-//         email: z.email({ message: "Email milena" }),
-//         password: z.string().min(6, { message: "Password pugena" })
-//     }
-// )
-// export type LoginForm = z.infer<typeof loginSchema>;
-
-// export default function Page() {
-//     const router = useRouter();
-//     const [pending, setTransition] = useTransition()
-//     const { register, handleSubmit, formState: { errors, isSubmitting } }
-//         = useForm<LoginForm>(
-//             {
-//                 resolver: zodResolver(loginSchema),
-//             }
-//         )
-    
-//     const [error, setError] = useState("");
-//     const onSubmit = async (data: LoginForm) => {
-//         // call action here
-        
-//     }
-    
-
