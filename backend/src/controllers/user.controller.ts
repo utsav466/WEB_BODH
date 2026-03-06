@@ -5,7 +5,7 @@ import { AuthRequest } from "../middlewares/auth.middlewares";
 const ALLOWED_CURRENCY = ["USD", "NPR", "INR"] as const;
 
 export class UserController {
-  // ✅ UPDATE profile (fullName + email + preferredCurrency + optional avatar)
+  
   async updateMe(req: AuthRequest, res: Response) {
     try {
       if (!req.userId) {
