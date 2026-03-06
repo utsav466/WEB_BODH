@@ -14,7 +14,7 @@ export function requireAuth(
   res: Response,
   next: NextFunction
 ) {
-  // ✅ 1. Read token from COOKIE first
+
   const token =
     req.cookies?.auth_token ||
     req.headers.authorization?.replace("Bearer ", "");
