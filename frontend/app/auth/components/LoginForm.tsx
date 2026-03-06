@@ -38,6 +38,14 @@ export default function LoginForm() {
     try {
       const res = await handleLogin(formData);
 
+      // ✅ IMPORTANT: save token for future requests (Create Book etc.)
+      if (res?.success && res?.token) {
+        localStorage.setItem("token", res.token);
+
+        // optional: store user too (handy later)
+        if (res.data) localStorage.setItem("user", JSON.stringify(res.data));
+      }
+
       if (res.success && res.data) {
         if (res.data.role === "admin") {
           router.push("/admin/dashboard");
@@ -91,7 +99,6 @@ export default function LoginForm() {
           )}
         </div>
 
-        {/* ✅ Forgot Password Link */}
         <div className="text-right text-sm">
           <Link
             href="/auth/forgot-password"

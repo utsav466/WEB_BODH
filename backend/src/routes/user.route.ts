@@ -6,18 +6,21 @@ import { uploadAvatar } from "../services/upload";
 const router = Router();
 const controller = new UserController();
 
-// ✅ current user info
+// current user info
 router.get("/me", requireAuth, (req, res) => controller.me(req, res));
 
-// ✅ UPDATE profile (fullName etc.)
+// JSON-only update (settings)
+router.patch("/me", requireAuth, (req, res) => controller.updateMe(req, res));
+
+// multipart update (avatar + fields)
 router.put(
   "/me",
   requireAuth,
-  uploadAvatar.single("avatar"), // allow avatar + text together
+  uploadAvatar.single("avatar"),
   (req, res) => controller.updateMe(req, res)
 );
 
-// ✅ avatar-only update (keep this)
+// avatar-only
 router.patch(
   "/me/avatar",
   requireAuth,

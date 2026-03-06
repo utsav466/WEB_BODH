@@ -76,12 +76,14 @@ export class AuthController {
 
       const { token } = await userService.loginUser(parsedData.data);
 
-      return res.status(200).json({
-        success: true,
-        message: "Login successful",
-        data: user,
-        token,
-      });
+const { password: _pw, ...safeUser } = user.toObject();
+
+return res.status(200).json({
+  success: true,
+  message: "Login successful",
+  data: safeUser,
+  token,
+});
     } catch (error: any) {
       return res.status(500).json({
         success: false,

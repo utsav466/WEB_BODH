@@ -2,28 +2,76 @@ import { Response } from "express";
 import { UserModel } from "../models/user.model";
 import { AuthRequest } from "../middlewares/auth.middlewares";
 
-export class UserController {
+const ALLOWED_CURRENCY = ["USD", "NPR", "INR"] as const;
 
-  // ✅ UPDATE profile (fullName + optional avatar)
+export class UserController {
+  // ✅ UPDATE profile (fullName + email + preferredCurrency + optional avatar)
   async updateMe(req: AuthRequest, res: Response) {
     try {
       if (!req.userId) {
         return res.status(401).json({ success: false, message: "Unauthorized" });
       }
 
-      const updateData: any = {
-        fullName: req.body.fullName,
-      };
+      const updateData: any = {};
 
+      // fullName
+      if (typeof req.body.fullName === "string") {
+        const fullName = req.body.fullName.trim();
+        if (!fullName) {
+          return res.status(400).json({ success: false, message: "fullName cannot be empty" });
+        }
+        updateData.fullName = fullName;
+      }
+
+      // email
+      if (typeof req.body.email === "string") {
+        const email = req.body.email.trim().toLowerCase();
+        if (!/\S+@\S+\.\S+/.test(email)) {
+          return res.status(400).json({ success: false, message: "Invalid email format" });
+        }
+
+        // prevent duplicate email
+        const exists = await UserModel.findOne({
+          email,
+          _id: { $ne: req.userId },
+        });
+
+        if (exists) {
+          return res.status(409).json({ success: false, message: "Email already in use" });
+        }
+
+        updateData.email = email;
+      }
+
+      // preferredCurrency
+      if (typeof req.body.preferredCurrency === "string") {
+        const cur = req.body.preferredCurrency.trim().toUpperCase();
+        if (!ALLOWED_CURRENCY.includes(cur as any)) {
+          return res.status(400).json({
+            success: false,
+            message: "Invalid preferredCurrency",
+            allowed: ALLOWED_CURRENCY,
+          });
+        }
+        updateData.preferredCurrency = cur;
+      }
+
+      // avatar file (multipart/form-data)
       if (req.file) {
         updateData.avatarUrl = `/uploads/avatars/${req.file.filename}`;
       }
 
-      const user = await UserModel.findByIdAndUpdate(
-        req.userId,
-        updateData,
-        { new: true }
-      ).select("-password");
+      // nothing to update?
+      if (Object.keys(updateData).length === 0) {
+        return res.status(400).json({
+          success: false,
+          message: "No valid fields provided to update",
+        });
+      }
+
+      const user = await UserModel.findByIdAndUpdate(req.userId, updateData, {
+        new: true,
+      }).select("-password");
 
       if (!user) {
         return res.status(404).json({ success: false, message: "User not found" });

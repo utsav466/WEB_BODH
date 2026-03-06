@@ -12,6 +12,11 @@ const UserSchema = new Schema(
       enum: ["user", "admin"],
       default: "user",
     },
+preferredCurrency: {
+  type: String,
+  enum: ["USD", "NPR", "INR"],
+  default: "NPR", // ✅ make NPR default
+},
     avatarUrl: { type: String, default: "" },
 
     // ✅ ADD THESE TWO FIELDS
