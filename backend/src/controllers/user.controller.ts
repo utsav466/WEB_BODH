@@ -54,7 +54,7 @@ export class UserController {
         updateData.preferredCurrency = cur;
       }
 
-      // avatar file (multipart/form-data)
+
       if (req.file) {
         updateData.avatarUrl = `/uploads/avatars/${req.file.filename}`;
       }
