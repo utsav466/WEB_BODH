@@ -103,9 +103,6 @@ export async function esewaSuccessDemo(req: Request, res: Response) {
 
     let oidRaw = String(req.query.oid || "").trim();
 
-    /* FIX: oid sometimes comes like
-       69aa24906cd5cce51e770c53?data=xxxx
-    */
 
     if (oidRaw.includes("?")) {
       oidRaw = oidRaw.split("?")[0];
