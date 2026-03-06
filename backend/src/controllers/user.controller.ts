@@ -14,7 +14,6 @@ export class UserController {
 
       const updateData: any = {};
 
-      // fullName
       if (typeof req.body.fullName === "string") {
         const fullName = req.body.fullName.trim();
         if (!fullName) {
