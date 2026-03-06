@@ -59,7 +59,7 @@ export class UserController {
         updateData.avatarUrl = `/uploads/avatars/${req.file.filename}`;
       }
 
-      // nothing to update?
+  
       if (Object.keys(updateData).length === 0) {
         return res.status(400).json({
           success: false,
