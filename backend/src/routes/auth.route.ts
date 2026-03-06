@@ -10,16 +10,30 @@ router.post("/register", (req, res) => authController.register(req, res));
 // Login
 router.post("/login", (req, res) => authController.login(req, res));
 
+// Forgot Password
+router.post("/forgot-password", (req, res) =>
+  authController.forgotPassword(req, res)
+);
+
+// Reset Password
+router.post("/reset-password", (req, res) =>
+  authController.resetPassword(req, res)
+);
+
 // Logout (example placeholder)
 router.post("/logout", (req, res) => {
-  // Invalidate JWT or clear session here
-  return res.status(200).json({ success: true, message: "Logout successful" });
+  return res.status(200).json({
+    success: true,
+    message: "Logout successful",
+  });
 });
 
 // Refresh token (optional)
 router.post("/refresh", (req, res) => {
-  // Issue new JWT if refresh token is valid
-  return res.status(200).json({ success: true, message: "Token refreshed" });
+  return res.status(200).json({
+    success: true,
+    message: "Token refreshed",
+  });
 });
 
 export default router;
