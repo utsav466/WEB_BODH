@@ -30,7 +30,7 @@ export class UserController {
           return res.status(400).json({ success: false, message: "Invalid email format" });
         }
 
-        // prevent duplicate email
+   
         const exists = await UserModel.findOne({
           email,
           _id: { $ne: req.userId },
