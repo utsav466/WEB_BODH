@@ -23,7 +23,6 @@ export class UserController {
         updateData.fullName = fullName;
       }
 
-      // email
       if (typeof req.body.email === "string") {
         const email = req.body.email.trim().toLowerCase();
         if (!/\S+@\S+\.\S+/.test(email)) {
